@@ -1,0 +1,95 @@
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-F3w7mX95PdgyTmZZMECAngseQB83DfGTowi0iMjiWaeVhAn4FJkqJByhZMI3AhiU" crossorigin="anonymous">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <title>
+        {% block title %}
+            {{ post.title }}
+        {% endblock %}
+    </title>
+</head>
+<body>
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+  <div class="container-fluid">
+    <a class="navbar-brand" href="{% url 'post_create_url' %}">Post create</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+        <li class="nav-item">
+          <a class="nav-link active" aria-current="page" href="{% url 'posts_list_url' %}">Posts</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="{% url 'tags_list_url' %}">tags</a>
+        </li>
+          <li class="nav-item">
+          <a class="nav-link" href="{% url 'tag_create_url' %}">tag_create</a>
+        </li>
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            Dropdown
+          </a>
+          <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+            <li><a class="dropdown-item" href="#">Action</a></li>
+            <li><a class="dropdown-item" href="#">Another action</a></li>
+            <li><hr class="dropdown-divider"></li>
+            <li><a class="dropdown-item" href="#">Something else here</a></li>
+          </ul>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link disabled">Disabled</a>
+        </li>
+      </ul>
+      <form class="d-flex" action="{% url 'posts_list_url' %}">
+        <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search" name="search">
+        <button class="btn btn-outline-success" type="submit">Search</button>
+      </form>
+    </div>
+  </div>
+</nav>
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-6 offset-md-2">
+            {% block content %}
+            !123A
+            {% endblock %}
+
+            {% if is_paginated %}
+            <nav aria-label="...">
+                <ul class="pagination">
+                    <li class="page-item {% if not prev_url %} disabled {% endif %}">
+                        <a class="page-link" href="{{ prev_url }}">Previous</a>
+                    </li>
+                    {% for n in page_object.paginator.page_range %}
+                    {% if page_object.number == n %}
+                    <li class="page-item active">
+                        <a class="page-link" href="?page={{ n }}">{{ n }}</a>
+                    </li>
+                    {% elif n > page_object.number|add:-3 and n < page_object.number|add:3 %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ n }}">{{ n }}</a>
+                    </li>
+                    {% endif %}
+                    {% endfor %}
+                     <li class="page-item {% if not next_url %} disabled {% endif %}">
+                        <a class="page-link" href="{{ next_url }}">Next</a>
+                    </li>
+                </ul>
+            </nav>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% if request.user.is_authenticated and request.user.is_staff %}
+<div class="admin-panel">
+    <a href="/admin">admin</a>
+    {% block admin-panel %}
+    {% endblock %}
+</div>
+{% endif %}
+
+</body>
+</html>
